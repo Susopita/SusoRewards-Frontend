@@ -43,4 +43,34 @@ describe('App Routing', () => {
       expect(routeStore.current).toBe('/login');
     });
   });
+
+  it('should redirect authenticated admin from /login to /dashboard-company', async () => {
+    sessionStore.login({ username: 'admin', role: 'admin', token: 'token' });
+    render(App);
+    routeStore.navigate('/login');
+
+    await waitFor(() => {
+      expect(routeStore.current).toBe('/dashboard-company');
+    });
+  });
+
+  it('should redirect authenticated restaurant from /login to /dashboard-restaurant', async () => {
+    sessionStore.login({ username: 'rest', role: 'restaurant', token: 'token' });
+    render(App);
+    routeStore.navigate('/login');
+
+    await waitFor(() => {
+      expect(routeStore.current).toBe('/dashboard-restaurant');
+    });
+  });
+
+  it('should redirect authenticated client from /afiliate to /dashboard-client', async () => {
+    sessionStore.login({ username: 'client', role: 'client', token: 'token' });
+    render(App);
+    routeStore.navigate('/afiliate');
+
+    await waitFor(() => {
+      expect(routeStore.current).toBe('/dashboard-client');
+    });
+  });
 });

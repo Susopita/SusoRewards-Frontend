@@ -1,7 +1,7 @@
 import { sessionStore } from '../stores/session.svelte';
 
 export class ApiClient {
-  private baseUrl: string;
+  private readonly baseUrl: string;
 
   constructor(baseUrl: string = '/api') {
     this.baseUrl = baseUrl;
@@ -42,7 +42,7 @@ export class ApiClient {
 
     // Map response for /auth/login to keep roles compatible with frontend session store
     if (path === '/auth/login') {
-      const res = json as any;
+      const res = json;
       if (res.user && res.role) {
         let mappedRole = 'client';
         if (res.role === 'empresa') mappedRole = 'admin';

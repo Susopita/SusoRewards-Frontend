@@ -87,4 +87,95 @@ describe('ApiClient', () => {
     });
     expect(result).toEqual(responseBody);
   });
+
+  it('should map /auth/login response correctly for empresa', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        user: { name: 'admin_user', email: 'a@a.com', code: 'EMP123' },
+        role: 'empresa',
+        token: 'token-abc'
+      }),
+    });
+
+    const client = new ApiClient('');
+    const result = await client.post('/auth/login');
+    expect(result.role).toBe('admin');
+    expect(result.username).toBe('admin_user');
+  });
+
+  it('should perform PUT request with body', async () => {
+    const putBody = { name: 'Update' };
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+
+    const client = new ApiClient('');
+    await client.put('/items/1', putBody);
+
+    expect((globalThis as any).fetch).toHaveBeenCalledWith('/items/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(putBody),
+    });
+  });
+
+  it('should perform PATCH request', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+
+    const client = new ApiClient('');
+    await client.patch('/items/1', { status: 'active' });
+
+    expect((globalThis as any).fetch).toHaveBeenCalledWith('/items/1', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'active' }),
+    });
+  });
+
+  it('should perform DELETE request', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+
+    const client = new ApiClient('');
+    await client.delete('/items/1');
+
+    expect((globalThis as any).fetch).toHaveBeenCalledWith('/items/1', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+  });
+
+  it('should throw error for failing PUT request', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+    });
+    const client = new ApiClient('');
+    await expect(client.put('/items/1')).rejects.toThrow('HTTP error! status: 500');
+  });
+
+  it('should throw error for failing PATCH request', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+    });
+    const client = new ApiClient('');
+    await expect(client.patch('/items/1')).rejects.toThrow('HTTP error! status: 400');
+  });
+
+  it('should throw error for failing DELETE request', async () => {
+    ((globalThis as any).fetch as any).mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+    });
+    const client = new ApiClient('');
+    await expect(client.delete('/items/1')).rejects.toThrow('HTTP error! status: 403');
+  });
 });

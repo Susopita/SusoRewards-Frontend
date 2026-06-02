@@ -64,4 +64,41 @@ describe('SessionStore', () => {
     sessionStore.logout();
     expect(localStorage.getItem('susorewards_session')).toBeNull();
   });
+
+  it('should load session from localStorage if valid', () => {
+    const validSession = {
+      username: 'valid_user',
+      role: 'admin',
+      token: 'token-123',
+      expiresAt: Date.now() + 10000
+    };
+    localStorage.setItem('susorewards_session', JSON.stringify(validSession));
+    
+    // Call private method for testing coverage
+    (sessionStore as any).loadFromStorage();
+    expect(sessionStore.isAuthenticated).toBe(true);
+    expect(sessionStore.current?.username).toBe('valid_user');
+  });
+
+  it('should clear session from localStorage if expired', () => {
+    const expiredSession = {
+      username: 'expired_user',
+      role: 'client',
+      token: 'token-456',
+      expiresAt: Date.now() - 10000
+    };
+    localStorage.setItem('susorewards_session', JSON.stringify(expiredSession));
+    
+    (sessionStore as any).loadFromStorage();
+    expect(sessionStore.isAuthenticated).toBe(false);
+    expect(localStorage.getItem('susorewards_session')).toBeNull();
+  });
+
+  it('should clear session from localStorage if JSON is invalid', () => {
+    localStorage.setItem('susorewards_session', 'invalid-json{');
+    
+    (sessionStore as any).loadFromStorage();
+    expect(sessionStore.isAuthenticated).toBe(false);
+    expect(localStorage.getItem('susorewards_session')).toBeNull();
+  });
 });

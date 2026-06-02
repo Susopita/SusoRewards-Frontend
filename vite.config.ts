@@ -42,8 +42,7 @@ export default defineConfig({
         'src/**/*.spec.ts',
         'src/**/*.test.ts',
         'src/setupTests.ts',
-        'src/adapters/mock/**/*',
-        'src/adapters/api.ts'
+        'src/adapters/mock/**/*'
       ],
       thresholds: {
         lines: 85,

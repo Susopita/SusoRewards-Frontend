@@ -2,7 +2,7 @@ export type SseEventHandler<T = unknown> = (data: T) => void;
 
 export class SseClient {
   private eventSource: EventSource | null = null;
-  private url: string;
+  private readonly url: string;
 
   constructor(url: string) {
     this.url = url;
@@ -22,7 +22,8 @@ export class SseClient {
       try {
         const data = JSON.parse(event.data);
         onMessage(data);
-      } catch (e) {
+      } catch (e: unknown) {
+        console.debug('SSE JSON parse fallback, using raw data', e);
         onMessage(event.data);
       }
     };

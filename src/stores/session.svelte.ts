@@ -14,19 +14,19 @@ class SessionStore {
   }
 
   private loadFromStorage() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const saved = window.localStorage.getItem('susorewards_session');
+    if (typeof globalThis.window !== 'undefined' && globalThis.window.localStorage) {
+      const saved = globalThis.window.localStorage.getItem('susorewards_session');
       if (saved) {
         try {
           const parsed = JSON.parse(saved) as UserSession;
           if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
-            window.localStorage.removeItem('susorewards_session');
+            globalThis.window.localStorage.removeItem('susorewards_session');
             this.#current = null;
           } else {
             this.#current = parsed;
           }
         } catch {
-          window.localStorage.removeItem('susorewards_session');
+          globalThis.window.localStorage.removeItem('susorewards_session');
         }
       }
     }
@@ -48,15 +48,15 @@ class SessionStore {
     const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
     const sessionWithExp: UserSession = { ...session, expiresAt };
     this.#current = sessionWithExp;
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem('susorewards_session', JSON.stringify(sessionWithExp));
+    if (typeof globalThis.window !== 'undefined' && globalThis.window.localStorage) {
+      globalThis.window.localStorage.setItem('susorewards_session', JSON.stringify(sessionWithExp));
     }
   }
 
   logout() {
     this.#current = null;
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.removeItem('susorewards_session');
+    if (typeof globalThis.window !== 'undefined' && globalThis.window.localStorage) {
+      globalThis.window.localStorage.removeItem('susorewards_session');
     }
   }
 }
