@@ -28,14 +28,10 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: |
-          cd SusoRewards-Frontend
-          pnpm install
+        run: pnpm install
         
       - name: Run Frontend Tests and Generate Coverage
-        run: |
-          cd SusoRewards-Frontend
-          pnpm test:coverage
+        run: pnpm test:coverage
 
       - name: Install sonar-scanner
         run: npm install -g sonarqube-scanner
@@ -45,7 +41,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_FRONTEND_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd SusoRewards-Frontend
           sonar-scanner \
             -Dsonar.host.url="$SONAR_HOST_URL" \
             -Dsonar.token="$SONAR_TOKEN"
