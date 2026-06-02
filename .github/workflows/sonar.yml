@@ -22,6 +22,17 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Run Frontend Tests and Generate Coverage
+        run: pnpm test:coverage
+
       - name: Install sonar-scanner
         run: npm install -g sonarqube-scanner
 
